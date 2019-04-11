@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.query;
 
 import com.vladmihalcea.book.hpjp.util.AbstractOracleIntegrationTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.Session;
 import org.hibernate.query.*;
 import org.junit.Test;
@@ -38,7 +39,7 @@ public class OracleExecutionPlanNativeQueryTest extends AbstractOracleIntegratio
 
     @Test
     public void testQueryExecutionPlan() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < ENTITY_COUNT; i++) {
                 Post post = new Post(String.format("Post no. %d", i));
 
@@ -49,7 +50,7 @@ public class OracleExecutionPlanNativeQueryTest extends AbstractOracleIntegratio
 
                 entityManager.persist(post);
             }
-        });
+        }));
 
         int pageStart = 20;
         int pageSize = 10;

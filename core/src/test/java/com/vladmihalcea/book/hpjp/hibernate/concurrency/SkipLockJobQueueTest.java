@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.concurrency;
 
 import com.vladmihalcea.book.hpjp.util.AbstractPostgreSQLIntegrationTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
@@ -31,7 +32,7 @@ public class SkipLockJobQueueTest extends AbstractPostgreSQLIntegrationTest {
     @Before
     public void init() {
         super.init();
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (long i = 0; i < 10; i++) {
                 Post post = new Post();
                 post.setId(i);
@@ -40,7 +41,7 @@ public class SkipLockJobQueueTest extends AbstractPostgreSQLIntegrationTest {
                 post.setStatus(PostStatus.PENDING);
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.batch;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.Session;
 import org.jboss.logging.Logger;
 import org.junit.Test;
@@ -68,14 +69,14 @@ public class PersistenceContextExtendedBatchTest extends AbstractTest {
 	private void withBatchAndSessionManagement() {
 		int entityCount = 20;
 
-		doInJPA(entityManager -> {
+		doInJPA((JPATransactionVoidFunction)(entityManager -> {
 			entityManager.unwrap(Session.class).setJdbcBatchSize(10);
 
 			for ( long i = 0; i < entityCount; ++i ) {
 				Post person = new Post( i, String.format( "Post nr %d", i ));
 				entityManager.persist( person );
 			}
-		});
+		}));
 	}
 
 	private void withBatchAndResetBackToGlobalSetting() {

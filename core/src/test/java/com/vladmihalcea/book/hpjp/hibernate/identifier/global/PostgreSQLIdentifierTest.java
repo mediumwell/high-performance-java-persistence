@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.identifier.global;
 
 import com.vladmihalcea.book.hpjp.util.AbstractPostgreSQLIntegrationTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.junit.Test;
 
 public class PostgreSQLIdentifierTest extends AbstractPostgreSQLIntegrationTest {
@@ -14,13 +15,13 @@ public class PostgreSQLIdentifierTest extends AbstractPostgreSQLIntegrationTest 
 
     @Test
     public void test() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 5; i++) {
                 Post post = new Post();
                 post.setTitle(String.format("Post nr %d", i + 1));
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
 }

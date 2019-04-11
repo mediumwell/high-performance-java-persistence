@@ -3,6 +3,7 @@ package com.vladmihalcea.book.hpjp.jdbc.caching;
 import com.vladmihalcea.book.hpjp.util.AbstractOracleIntegrationTest;
 import com.vladmihalcea.book.hpjp.util.ReflectionUtils;
 import com.vladmihalcea.book.hpjp.util.providers.entity.BlogEntityProvider;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -41,7 +42,7 @@ public class OracleExplicitStatementCacheTest extends AbstractOracleIntegrationT
     @Override
     public void init() {
         super.init();
-        doInJDBC(connection -> {
+        doInJDBC((ConnectionVoidCallable)(connection -> {
             try (
                     PreparedStatement postStatement = connection.prepareStatement(INSERT_POST);
                     PreparedStatement postCommentStatement = connection.prepareStatement(INSERT_POST_COMMENT);
@@ -72,13 +73,13 @@ public class OracleExplicitStatementCacheTest extends AbstractOracleIntegrationT
             } catch (SQLException e) {
                 fail(e.getMessage());
             }
-        });
+        }));
     }
 
     @Test
     @Ignore
     public void testStatementCaching() {
-        doInJDBC(connection -> {
+        doInJDBC((ConnectionVoidCallable)(connection -> {
             for (int i = 0; i < 5; i++) {
                 ReflectionUtils.invokeSetter(connection,"explicitCachingEnabled", true);
                 ReflectionUtils.invokeSetter(connection,"statementCacheSize", 1);
@@ -92,7 +93,7 @@ public class OracleExplicitStatementCacheTest extends AbstractOracleIntegrationT
                     ReflectionUtils.invoke(statement, ReflectionUtils.getMethod(statement, "closeWithKey", String.class), SELECT_POST_REVIEWS_KEY);
                 }
             }
-        });
+        }));
     }
 
     protected int getPostCount() {

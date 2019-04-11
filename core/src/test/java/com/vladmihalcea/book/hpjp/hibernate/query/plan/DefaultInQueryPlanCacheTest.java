@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.query.plan;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.stat.Statistics;
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class DefaultInQueryPlanCacheTest extends AbstractTest {
 
     @Override
     protected void afterInit() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 1; i <= 15; i++) {
                 Post post = new Post();
                 post.setId(i);
@@ -48,7 +49,7 @@ public class DefaultInQueryPlanCacheTest extends AbstractTest {
 
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
 
@@ -58,14 +59,14 @@ public class DefaultInQueryPlanCacheTest extends AbstractTest {
         Statistics statistics = sessionFactory.getStatistics();
         statistics.clear();
 
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 1; i < 16; i++) {
                 getPostByIds(
                     entityManager,
                     IntStream.range(1, i + 1).boxed().toArray(Integer[]::new)
                 );
             }
-        });
+        }));
 
         assertEquals(16L, statistics.getQueryPlanCacheMissCount());
 

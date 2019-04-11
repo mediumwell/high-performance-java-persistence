@@ -2,6 +2,7 @@ package com.vladmihalcea.book.hpjp.hibernate.identifier.uuid;
 
 import com.vladmihalcea.book.hpjp.util.AbstractPostgreSQLIntegrationTest;
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
@@ -51,7 +52,7 @@ public class PostgreSQLUUIDIdentifierTest extends AbstractPostgreSQLIntegrationT
 
     @Test
     public void testBatch() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 3; i++) {
                 Post post = new Post();
                 post.setTitle(
@@ -60,7 +61,7 @@ public class PostgreSQLUUIDIdentifierTest extends AbstractPostgreSQLIntegrationT
 
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
     @Entity(name = "Post")

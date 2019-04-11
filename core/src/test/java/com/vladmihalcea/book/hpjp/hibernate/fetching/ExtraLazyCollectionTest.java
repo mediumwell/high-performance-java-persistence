@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.fetching;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.LazyCollection;
@@ -67,7 +68,7 @@ public class ExtraLazyCollectionTest extends AbstractTest {
 
         LOGGER.info("Fetch comments with for loop");
 
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             Post post = entityManager.find(Post.class, 1L);
 
             int commentCount = post.getComments().size();
@@ -79,7 +80,7 @@ public class ExtraLazyCollectionTest extends AbstractTest {
                     comment.getReview()
                 );
             }
-        });
+        }));
     }
 
     @Entity(name = "Post")

@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.identifier.batch;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.junit.Test;
 
 import javax.persistence.*;
@@ -17,11 +18,11 @@ public class AutoIdentifierWithSequenceGeneratorTest extends AbstractTest {
     @Test
     public void test() {
         int batchSize = 10;
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < batchSize; i++) {
                 entityManager.persist(new Post());
             }
-        });
+        }));
     }
 
     @Entity(name = "Post")

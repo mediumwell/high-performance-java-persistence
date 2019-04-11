@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.cache.query;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.jpa.QueryHints;
 import org.junit.After;
@@ -42,7 +43,7 @@ public class QueryCacheDTOTest extends AbstractTest {
     @Before
     public void init() {
         super.init();
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 10; i++) {
                 Post post = new Post();
                 post.setTitle(
@@ -61,7 +62,7 @@ public class QueryCacheDTOTest extends AbstractTest {
                 }
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
     @After

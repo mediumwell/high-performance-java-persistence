@@ -8,6 +8,7 @@ import com.vladmihalcea.book.hpjp.hibernate.forum.PostComment;
 import com.vladmihalcea.book.hpjp.hibernate.forum.PostDetails;
 import com.vladmihalcea.book.hpjp.hibernate.forum.Tag;
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Interceptor;
 import org.hibernate.type.Type;
@@ -99,7 +100,7 @@ public class BytecodeEnhancementDirtyCheckingPerformanceTest extends AbstractTes
     @Override
     public void init() {
         super.init();
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < entityCount; i++) {
                 Post post = new Post("JPA with Hibernate");
                 post.setId(i * 10L);
@@ -138,13 +139,13 @@ public class BytecodeEnhancementDirtyCheckingPerformanceTest extends AbstractTes
                 entityManager.flush();
                 postIds.add(post.getId());
             }
-        });
+        }));
     }
 
     @Test
     @Ignore
     public void testDirtyChecking() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             List<Post> posts = posts(entityManager);
             for (int i = 0; i < 100_000; i++) {
                 for (Post post : posts) {
@@ -152,7 +153,7 @@ public class BytecodeEnhancementDirtyCheckingPerformanceTest extends AbstractTes
                 }
                 entityManager.flush();
             }
-        });
+        }));
 
         doInJPA(entityManager -> {
             enableMetrics = true;

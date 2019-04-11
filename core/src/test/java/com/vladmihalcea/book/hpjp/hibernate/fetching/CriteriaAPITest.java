@@ -2,6 +2,7 @@ package com.vladmihalcea.book.hpjp.hibernate.fetching;
 
 import com.vladmihalcea.book.hpjp.hibernate.forum.*;
 import com.vladmihalcea.book.hpjp.util.AbstractPostgreSQLIntegrationTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.query.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
@@ -34,7 +35,7 @@ public class CriteriaAPITest extends AbstractPostgreSQLIntegrationTest {
     @Override
     public void init() {
         super.init();
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             Post post = new Post();
             post.setId(1L);
             post.setTitle("high-performance-java-persistence");
@@ -46,7 +47,7 @@ public class CriteriaAPITest extends AbstractPostgreSQLIntegrationTest {
                 comment.setReview("Great");
                 post.addComment(comment);
             }
-        });
+        }));
     }
 
     @Test

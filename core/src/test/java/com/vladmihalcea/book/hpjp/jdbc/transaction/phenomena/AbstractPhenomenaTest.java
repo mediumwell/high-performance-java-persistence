@@ -7,15 +7,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import javax.persistence.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -128,16 +131,16 @@ public abstract class AbstractPhenomenaTest extends AbstractTest {
                         try {
                             update(bobConnection, updatePostTitleParamSql(), new Object[]{"Bob"});
                         } catch (Exception e) {
-                            if (ExceptionUtil.isLockTimeout(e)) {
-                                preventedByLocking.set(true);
+                            if( ExceptionUtil.isLockTimeout( e )) {
+                                preventedByLocking.set( true );
                             } else {
-                                throw new IllegalStateException(e);
+                                throw new IllegalStateException( e );
                             }
                         }
                     });
                 });
             } catch (Exception e) {
-                if (!ExceptionUtil.isConnectionClose(e)) {
+                if ( !ExceptionUtil.isConnectionClose( e ) ) {
                     fail(e.getMessage());
                 }
             }
@@ -146,7 +149,7 @@ public abstract class AbstractPhenomenaTest extends AbstractTest {
         doInJDBC(aliceConnection -> {
             String title = selectStringColumn(aliceConnection, selectPostTitleSql());
             LOGGER.info("Isolation level {} {} Dirty Write", isolationLevelName, !title.equals(firstTitle) ? "allows" : "prevents");
-            if (preventedByLocking.get()) {
+            if(preventedByLocking.get()) {
                 LOGGER.info("Isolation level {} prevents Dirty Write by locking", isolationLevelName);
             }
         });
@@ -179,15 +182,15 @@ public abstract class AbstractPhenomenaTest extends AbstractTest {
                                     fail("Unknown title: " + title);
                                 }
                             } catch (Exception e) {
-                                if (ExceptionUtil.isLockTimeout(e)) {
-                                    preventedByLocking.set(true);
+                                if( ExceptionUtil.isLockTimeout( e )) {
+                                    preventedByLocking.set( true );
                                 } else {
-                                    throw new IllegalStateException(e);
+                                    throw new IllegalStateException( e );
                                 }
                             }
                         });
                     } catch (Exception e) {
-                        if (!ExceptionUtil.isConnectionClose(e)) {
+                        if ( !ExceptionUtil.isConnectionClose( e ) ) {
                             fail(e.getMessage());
                         }
                     }
@@ -196,7 +199,7 @@ public abstract class AbstractPhenomenaTest extends AbstractTest {
         });
 
         LOGGER.info("Isolation level {} {} Dirty Read", isolationLevelName, dirtyRead.get() ? "allows" : "prevents");
-        if (preventedByLocking.get()) {
+        if(preventedByLocking.get()) {
             LOGGER.info("Isolation level {} prevents Dirty Read by locking", isolationLevelName);
         }
     }
@@ -219,23 +222,23 @@ public abstract class AbstractPhenomenaTest extends AbstractTest {
                         try {
                             assertEquals(1, update(bobConnection, updatePostTitleSql()));
                         } catch (Exception e) {
-                            if (ExceptionUtil.isLockTimeout(e)) {
-                                preventedByLocking.set(true);
+                            if( ExceptionUtil.isLockTimeout( e )) {
+                                preventedByLocking.set( true );
                             } else {
-                                throw new IllegalStateException(e);
+                                throw new IllegalStateException( e );
                             }
                         }
                     });
                 });
             } catch (Exception e) {
-                if (!ExceptionUtil.isConnectionClose(e)) {
+                if ( !ExceptionUtil.isConnectionClose( e ) ) {
                     fail(e.getMessage());
                 }
             }
             String secondTitle = selectStringColumn(aliceConnection, selectPostTitleSql());
 
             LOGGER.info("Isolation level {} {} Non-Repeatable Read", isolationLevelName, !firstTitle.equals(secondTitle) ? "allows" : "prevents");
-            if (preventedByLocking.get()) {
+            if(preventedByLocking.get()) {
                 LOGGER.info("Isolation level {} prevents Non-Repeatable Read by locking", isolationLevelName);
             }
         });
@@ -261,23 +264,23 @@ public abstract class AbstractPhenomenaTest extends AbstractTest {
                         try {
                             assertEquals(1, update(bobConnection, insertCommentSql()));
                         } catch (Exception e) {
-                            if (ExceptionUtil.isLockTimeout(e)) {
-                                preventedByLocking.set(true);
+                            if( ExceptionUtil.isLockTimeout( e )) {
+                                preventedByLocking.set( true );
                             } else {
-                                throw new IllegalStateException(e);
+                                throw new IllegalStateException( e );
                             }
                         }
                     });
                 });
             } catch (Exception e) {
-                if (!ExceptionUtil.isConnectionClose(e)) {
+                if ( !ExceptionUtil.isConnectionClose( e ) ) {
                     fail(e.getMessage());
                 }
             }
             int secondCommentsCount = count(aliceConnection, countCommentsSql());
 
             LOGGER.info("Isolation level {} {} Phantom Reads", isolationLevelName, secondCommentsCount != commentsCount ? "allows" : "prevents");
-            if (preventedByLocking.get()) {
+            if(preventedByLocking.get()) {
                 LOGGER.info("Isolation level {} prevents Phantom Read by locking", isolationLevelName);
             }
         });
@@ -301,12 +304,12 @@ public abstract class AbstractPhenomenaTest extends AbstractTest {
                         try {
                             update(bobConnection, updatePostTitleParamSql(), new Object[]{"Bob"});
                         } catch (Exception e) {
-                            if (ExceptionUtil.isLockTimeout(e)) {
-                                preventedByLocking.set(true);
-                            } else if (ExceptionUtil.isMVCCAnomalyDetection(e)) {
-                                preventedByMVCC.set(true);
+                            if( ExceptionUtil.isLockTimeout( e )) {
+                                preventedByLocking.set( true );
+                            } else if( ExceptionUtil.isMVCCAnomalyDetection( e )) {
+                                preventedByMVCC.set( true );
                             } else {
-                                throw new IllegalStateException(e);
+                                throw new IllegalStateException( e );
                             }
                         }
                     });
@@ -314,13 +317,12 @@ public abstract class AbstractPhenomenaTest extends AbstractTest {
                 update(aliceConnection, updatePostTitleParamSql(), new Object[]{"Alice"});
             });
         } catch (Exception e) {
-            if (ExceptionUtil.isLockTimeout(e)) {
-                preventedByLocking.set(true);
-            } else if (ExceptionUtil.isMVCCAnomalyDetection(e)) {
-                preventedByMVCC.set(true);
-            }
-            if (!ExceptionUtil.isConnectionClose(e)) {
-                fail(e.getMessage());
+            if( ExceptionUtil.isLockTimeout( e )) {
+                preventedByLocking.set( true );
+            } else if( ExceptionUtil.isMVCCAnomalyDetection( e )) {
+                preventedByMVCC.set( true );
+            } else if ( !ExceptionUtil.isConnectionClose( e ) ) {
+                throw new IllegalStateException( e );
             }
         }
         doInJDBC(aliceConnection -> {
@@ -355,12 +357,12 @@ public abstract class AbstractPhenomenaTest extends AbstractTest {
                             update(bobConnection, updatePostTitleParamSql(), new Object[]{"Bob"});
                             update(bobConnection, updatePostDetailsAuthorParamSql(), new Object[]{"Bob"});
                         } catch (Exception e) {
-                            if (ExceptionUtil.isLockTimeout(e)) {
-                                preventedByLocking.set(true);
-                            } else if (ExceptionUtil.isMVCCAnomalyDetection(e)) {
-                                preventedByMVCC.set(true);
+                            if( ExceptionUtil.isLockTimeout( e )) {
+                                preventedByLocking.set( true );
+                            } else if( ExceptionUtil.isMVCCAnomalyDetection( e )) {
+                                preventedByMVCC.set( true );
                             } else {
-                                throw new IllegalStateException(e);
+                                throw new IllegalStateException( e );
                             }
                         }
                     });
@@ -369,12 +371,12 @@ public abstract class AbstractPhenomenaTest extends AbstractTest {
                 LOGGER.info("Isolation level {} {} Read Skew", isolationLevelName, "Bob".equals(createdBy) ? "allows" : "prevents");
             });
         } catch (Exception e) {
-            if (ExceptionUtil.isLockTimeout(e)) {
-                preventedByLocking.set(true);
-            } else if (ExceptionUtil.isMVCCAnomalyDetection(e)) {
-                preventedByMVCC.set(true);
-            } else if (!ExceptionUtil.isConnectionClose(e)) {
-                throw new IllegalStateException(e);
+            if( ExceptionUtil.isLockTimeout( e )) {
+                preventedByLocking.set( true );
+            } else if( ExceptionUtil.isMVCCAnomalyDetection( e )) {
+                preventedByMVCC.set( true );
+            } else if ( !ExceptionUtil.isConnectionClose( e ) ) {
+                throw new IllegalStateException( e );
             }
         }
         doInJDBC(aliceConnection -> {
@@ -410,12 +412,12 @@ public abstract class AbstractPhenomenaTest extends AbstractTest {
                             String bonCreatedBy = selectStringColumn(bobConnection, selectPostDetailsAuthorSql());
                             update(bobConnection, updatePostTitleParamSql(), new Object[]{"Bob"});
                         } catch (Exception e) {
-                            if (ExceptionUtil.isLockTimeout(e)) {
-                                preventedByLocking.set(true);
-                            } else if (ExceptionUtil.isMVCCAnomalyDetection(e)) {
-                                preventedByMVCC.set(true);
+                            if( ExceptionUtil.isLockTimeout( e )) {
+                                preventedByLocking.set( true );
+                            } else if( ExceptionUtil.isMVCCAnomalyDetection( e )) {
+                                preventedByMVCC.set( true );
                             } else {
-                                throw new IllegalStateException(e);
+                                throw new IllegalStateException( e );
                             }
                         }
                     });
@@ -423,11 +425,11 @@ public abstract class AbstractPhenomenaTest extends AbstractTest {
                 update(aliceConnection, updatePostDetailsAuthorParamSql(), new Object[]{"Alice"});
             });
         } catch (Exception e) {
-            if (ExceptionUtil.isLockTimeout(e)) {
-                preventedByLocking.set(true);
-            } else if (ExceptionUtil.isMVCCAnomalyDetection(e)) {
-                preventedByMVCC.set(true);
-            } else if (!ExceptionUtil.isConnectionClose(e)) {
+            if( ExceptionUtil.isLockTimeout( e )) {
+                preventedByLocking.set( true );
+            } else if( ExceptionUtil.isMVCCAnomalyDetection( e )) {
+                preventedByMVCC.set( true );
+            } else if ( !ExceptionUtil.isConnectionClose( e ) ) {
                 fail(e.getMessage());
             }
         }

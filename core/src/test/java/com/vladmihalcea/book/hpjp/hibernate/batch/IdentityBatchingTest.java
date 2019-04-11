@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.batch;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.dialect.Dialect;
 import org.junit.Test;
 
@@ -66,11 +67,11 @@ public class IdentityBatchingTest extends AbstractTest {
     }
 
     private void insertPosts() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 3; i++) {
                 entityManager.persist(new Post(String.format("Post no. %d", i + 1)));
             }
-        });
+        }));
     }
 
     protected int itemsCount() {

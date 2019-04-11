@@ -8,6 +8,7 @@ import com.vladmihalcea.book.hpjp.util.AbstractTest;
 import com.vladmihalcea.book.hpjp.util.providers.DataSourceProvider;
 import com.vladmihalcea.book.hpjp.util.providers.OracleDataSourceProvider;
 import com.vladmihalcea.book.hpjp.util.providers.PostgreSQLDataSourceProvider;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -82,12 +83,12 @@ public class SequenceOptimizerIdentifierTest extends AbstractTest {
     public void testIdentifierGenerator() throws InterruptedException, ExecutionException {
         LOGGER.debug("testIdentifierGenerator, database: {}, entityProvider: {}", dataSourceProvider.database(), entityProvider.getClass().getSimpleName());
         //warming-up
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < insertCount; i++) {
                 entityManager.persist(entityProvider.newPost());
             }
-        });
-        doInJPA(entityManager -> {
+        }));
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < executionCount; i++) {
                 for (int j = 0; j < insertCount; j++) {
                     long startNanos = System.nanoTime();
@@ -97,7 +98,7 @@ public class SequenceOptimizerIdentifierTest extends AbstractTest {
                 entityManager.flush();
                 entityManager.clear();
             }
-        });
+        }));
         logReporter.report();
         sleep(100);
     }

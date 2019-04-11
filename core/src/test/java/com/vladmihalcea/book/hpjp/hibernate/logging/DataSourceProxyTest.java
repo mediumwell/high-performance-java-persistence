@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
 import com.vladmihalcea.book.hpjp.util.DataSourceProxyType;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.junit.Test;
 
 import javax.persistence.Entity;
@@ -46,7 +47,7 @@ public class DataSourceProxyTest extends AbstractTest {
 
     @Test
     public void testBatch() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for ( long i = 0; i < 3; i++ ) {
                 Post post = new Post();
                 post.setId( i );
@@ -58,7 +59,7 @@ public class DataSourceProxyTest extends AbstractTest {
                 );
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
     @Entity(name = "Post")

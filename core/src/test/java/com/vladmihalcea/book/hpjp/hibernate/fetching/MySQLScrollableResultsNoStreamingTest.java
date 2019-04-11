@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
 import com.codahale.metrics.Timer;
 import com.vladmihalcea.book.hpjp.util.AbstractMySQLIntegrationTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.query.Query;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -104,19 +105,19 @@ public class MySQLScrollableResultsNoStreamingTest extends AbstractMySQLIntegrat
     public void testStream() {
         //warming up
         LOGGER.info("Warming up");
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 25_000; i++) {
                 stream(entityManager);
             }
-        });
+        }));
         int iterations = 10_000;
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < iterations; i++) {
                 long startNanos = System.nanoTime();
                 stream(entityManager);
                 timer.update(System.nanoTime() - startNanos, TimeUnit.NANOSECONDS);
             }
-        });
+        }));
         logReporter.report();
     }
 

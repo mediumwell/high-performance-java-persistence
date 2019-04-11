@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
 import com.codahale.metrics.Timer;
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 import org.junit.Before;
@@ -74,7 +75,7 @@ public class HydratedStateBenchmarkTest extends AbstractTest {
     @Before
     public void init() {
         super.init();
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (long i = 0; i < insertCount; i++) {
                 Post post = new Post();
                 post.setId(i);
@@ -87,20 +88,20 @@ public class HydratedStateBenchmarkTest extends AbstractTest {
                 details.setPost(post);
                 entityManager.persist(details);*/
             }
-        });
+        }));
     }
 
     @Test
     @Ignore
     public void testReadOnlyFetchPerformance() {
         //warming-up
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (long i = 0; i < 10000; i++) {
                 Post post = entityManager.find(Post.class, i % insertCount);
                 //PostDetails details = entityManager.find(PostDetails.class, i);
                 assertNotNull(post);
             }
-        });
+        }));
         doInJPA(entityManager -> {
             long startNanos = System.nanoTime();
             for (long i = 0; i < insertCount; i++) {

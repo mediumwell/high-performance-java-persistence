@@ -8,6 +8,7 @@ import com.vladmihalcea.book.hpjp.util.providers.JTDSDataSourceProvider;
 import com.vladmihalcea.book.hpjp.util.providers.MySQLDataSourceProvider;
 import com.vladmihalcea.book.hpjp.util.providers.OracleDataSourceProvider;
 import com.vladmihalcea.book.hpjp.util.providers.PostgreSQLDataSourceProvider;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import net.sourceforge.jtds.jdbcx.JtdsDataSource;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -182,7 +183,7 @@ public class StatementCachePoolableTest extends DataSourceProviderIntegrationTes
     @Test
     public void selectWhenCaching() {
         AtomicInteger counter = new AtomicInteger();
-        doInJDBC(connection -> {
+        doInJDBC((ConnectionVoidCallable)(connection -> {
             for (int i = 0; i < 2; i++) {
                 try (PreparedStatement statement = connection.prepareStatement(
                         "select p.title, pd.created_on " +
@@ -199,7 +200,7 @@ public class StatementCachePoolableTest extends DataSourceProviderIntegrationTes
                     LOGGER.error("Failed test", e);
                 }
             }
-        });
+        }));
         LOGGER.info("When using {}, throughput is {} statements",
                 dataSourceProvider(),
                 counter.get());

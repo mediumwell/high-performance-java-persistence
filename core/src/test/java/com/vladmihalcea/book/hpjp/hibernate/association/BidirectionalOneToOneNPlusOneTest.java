@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.association;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.junit.Test;
 
 import javax.persistence.*;
@@ -24,14 +25,14 @@ public class BidirectionalOneToOneNPlusOneTest extends AbstractTest {
 
     @Test
     public void test() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 3; i++) {
                 Post post = new Post(String.format("Post nr. %d", i));
                 post.setDetails(new PostDetails("Excellent!"));
 
                 entityManager.persist(post);
             }
-        });
+        }));
 
         doInJPA(entityManager -> {
             List<Post> posts = entityManager.createQuery(

@@ -1,5 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.batch;
 
+import com.vladmihalcea.book.hpjp.util.transaction.*;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -49,7 +51,7 @@ public class BatchMergeVsUpdateTest extends AbstractTest {
     @Before
     public void init() {
         super.init();
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 3; i++) {
                 Post post = new Post(
                     String.format("High-Performance Java Persistence, Part no. %d", i)
@@ -59,7 +61,7 @@ public class BatchMergeVsUpdateTest extends AbstractTest {
                 );
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
     @Test

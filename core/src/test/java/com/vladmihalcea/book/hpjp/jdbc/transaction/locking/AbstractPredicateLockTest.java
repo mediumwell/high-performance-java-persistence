@@ -2,6 +2,7 @@ package com.vladmihalcea.book.hpjp.jdbc.transaction.locking;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
 import com.vladmihalcea.book.hpjp.util.exception.ExceptionUtil;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
 import org.hibernate.Session;
@@ -36,7 +37,7 @@ public abstract class AbstractPredicateLockTest extends AbstractTest {
     @Override
     public void init() {
         super.init();
-        doInHibernate(session -> {
+        doInHibernate((HibernateTransactionConsumer)(session -> {
             Post post = new Post();
             post.setId(1L);
             post.setTitle("High-Performance Java Persistence");
@@ -48,7 +49,7 @@ public abstract class AbstractPredicateLockTest extends AbstractTest {
                 comment.setReview(String.format("Comment nr. %d", i));
                 post.addComment(comment);
             }
-        });
+        }));
 
     }
 

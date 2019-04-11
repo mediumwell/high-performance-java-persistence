@@ -5,6 +5,7 @@ import com.vladmihalcea.book.hpjp.util.DataSourceProviderIntegrationTest;
 import com.vladmihalcea.book.hpjp.util.ReflectionUtils;
 import com.vladmihalcea.book.hpjp.util.providers.*;
 import com.vladmihalcea.book.hpjp.util.providers.entity.BlogEntityProvider;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import net.sourceforge.jtds.jdbcx.JtdsDataSource;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -222,7 +223,7 @@ public class StatementCacheTest extends DataSourceProviderIntegrationTest {
     public void selectWhenCaching() {
         long ttlMillis = System.currentTimeMillis() + getRunMillis();
         AtomicInteger counter = new AtomicInteger();
-        doInJDBC(connection -> {
+        doInJDBC((ConnectionVoidCallable)(connection -> {
             while (System.currentTimeMillis() < ttlMillis)
                 try (PreparedStatement statement = connection.prepareStatement(
                         "select p.title, pd.created_on " +
@@ -237,7 +238,7 @@ public class StatementCacheTest extends DataSourceProviderIntegrationTest {
                 } catch (SQLException e) {
                     fail(e.getMessage());
                 }
-        });
+        }));
         LOGGER.info("When using {}, throughput is {} statements",
                 dataSourceProvider(),
                 counter.get());

@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.identifier;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.junit.Test;
@@ -21,12 +22,12 @@ public class HiloIdentifierTest extends AbstractTest {
 
     @Test
     public void testHiloIdentifierGenerator() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for(int i = 0; i < 4; i++) {
                 Post post = new Post();
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
     @Entity(name = "Post")

@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.fetching;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.junit.Test;
@@ -30,7 +31,7 @@ public class NPlusOneLazyFetchingWithSubselectManyToOneFindEntityTest extends Ab
 
         String review = "Excellent!";
 
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
 
             Tag tag1 = new Tag();
             tag1.id = 1L;
@@ -57,7 +58,7 @@ public class NPlusOneLazyFetchingWithSubselectManyToOneFindEntityTest extends Ab
                 comment.setReview(review);
                 entityManager.persist(comment);
             }
-        });
+        }));
 
         doInJPA(entityManager -> {
             LOGGER.info("N+1 query problem when using Subselect");

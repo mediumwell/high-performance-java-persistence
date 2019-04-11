@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
 import com.vladmihalcea.book.hpjp.hibernate.query.recursive.PostCommentScore;
 import com.vladmihalcea.book.hpjp.util.AbstractPostgreSQLIntegrationTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -85,7 +86,7 @@ public abstract class AbstractPostCommentScorePerformanceTest extends AbstractPo
     }
 
     private void insertPost(Long postId) {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             Post post = new Post();
             post.setId(postId);
             post.setTitle("High-Performance Java Persistence");
@@ -133,7 +134,7 @@ public abstract class AbstractPostCommentScorePerformanceTest extends AbstractPo
                     }
                 }
             }
-        });
+        }));
     }
 
     private boolean entropy() {

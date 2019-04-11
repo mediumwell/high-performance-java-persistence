@@ -5,6 +5,7 @@ import com.codahale.metrics.Slf4jReporter;
 import com.codahale.metrics.Timer;
 import com.codahale.metrics.UniformReservoir;
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.jpa.QueryHints;
 import org.hibernate.query.*;
 import org.junit.Ignore;
@@ -112,16 +113,16 @@ public class PlanCacheSizePerformanceTest extends AbstractTest {
 
         LOGGER.info("Warming up");
 
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 10000; i++) {
                 query1.apply(entityManager);
                 query2.apply(entityManager);
             }
-        });
+        }));
 
         LOGGER.info("Compile queries for plan cache size {}", planCacheMaxSize);
 
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 2500; i++) {
                 long startNanos = System.nanoTime();
                 query1.apply(entityManager);
@@ -131,7 +132,7 @@ public class PlanCacheSizePerformanceTest extends AbstractTest {
                 query2.apply(entityManager);
                 timer.update(System.nanoTime() - startNanos, TimeUnit.NANOSECONDS);
             }
-        });
+        }));
 
         logReporter.report();
     }

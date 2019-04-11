@@ -3,6 +3,7 @@ package com.vladmihalcea.book.hpjp.hibernate.identifier.batch;
 import com.vladmihalcea.book.hpjp.util.providers.DataSourceProvider;
 import com.vladmihalcea.book.hpjp.util.providers.Database;
 import com.vladmihalcea.book.hpjp.util.providers.MariaDBDataSourceProvider;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.dialect.MariaDB102Dialect;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class MariaDBIdentifierTest extends AbstractBatchIdentifierTest {
     @Test
     @Ignore
     public void testSequenceIdentifierGenerator() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 3; i++) {
                 Post post = new Post();
                 post.setTitle(
@@ -52,7 +53,7 @@ public class MariaDBIdentifierTest extends AbstractBatchIdentifierTest {
                 );
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
     @Entity(name = "Post")

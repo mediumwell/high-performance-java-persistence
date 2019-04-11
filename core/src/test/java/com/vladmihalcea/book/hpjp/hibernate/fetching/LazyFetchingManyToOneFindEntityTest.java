@@ -2,6 +2,7 @@ package com.vladmihalcea.book.hpjp.hibernate.fetching;
 
 import com.vladmihalcea.book.hpjp.hibernate.forum.*;
 import com.vladmihalcea.book.hpjp.util.AbstractPostgreSQLIntegrationTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.LazyInitializationException;
 import org.junit.Test;
 
@@ -82,7 +83,7 @@ public class LazyFetchingManyToOneFindEntityTest extends AbstractPostgreSQLInteg
 
         String review = "Excellent!";
 
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
 
             for (long i = 1; i < 4; i++) {
                 Post post = new Post();
@@ -96,7 +97,7 @@ public class LazyFetchingManyToOneFindEntityTest extends AbstractPostgreSQLInteg
                 comment.setReview(review);
                 entityManager.persist(comment);
             }
-        });
+        }));
 
         doInJPA(entityManager -> {
             LOGGER.info("N+1 query problem");

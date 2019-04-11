@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.fetching;
 
 import com.vladmihalcea.book.hpjp.util.AbstractPostgreSQLIntegrationTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.junit.Test;
 
 import javax.persistence.*;
@@ -24,7 +25,7 @@ public class LazyInitializationExceptionFixWithDTOTest extends AbstractPostgreSQ
 
         String review = "Excellent!";
 
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
 
             for (long i = 1; i < 4; i++) {
                 Post post = new Post();
@@ -38,7 +39,7 @@ public class LazyInitializationExceptionFixWithDTOTest extends AbstractPostgreSQ
                 comment.setReview(review);
                 entityManager.persist(comment);
             }
-        });
+        }));
 
         List<PostCommentDTO> comments = doInJPA(entityManager -> {
             return entityManager.createQuery(

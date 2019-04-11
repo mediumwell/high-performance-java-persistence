@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import org.junit.Test;
 
 import com.vladmihalcea.book.hpjp.util.AbstractPostgreSQLIntegrationTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 
 public class GlobalIdentifierGeneratorScopeTest extends AbstractPostgreSQLIntegrationTest {
 
@@ -32,7 +33,7 @@ public class GlobalIdentifierGeneratorScopeTest extends AbstractPostgreSQLIntegr
 
     @Test
     public void testHiloIdentifierGenerator() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for(int i = 0; i < 4; i++) {
                 Post post = new Post();
                 entityManager.persist(post);
@@ -40,7 +41,7 @@ public class GlobalIdentifierGeneratorScopeTest extends AbstractPostgreSQLIntegr
                 Announcement announcement = new Announcement();
                 entityManager.persist(announcement);
             }
-        });
+        }));
     }
 
     @Entity(name = "Post")

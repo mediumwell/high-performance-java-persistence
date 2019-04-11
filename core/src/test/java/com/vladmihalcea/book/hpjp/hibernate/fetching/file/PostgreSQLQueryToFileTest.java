@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.fetching.file;
 
 import com.vladmihalcea.book.hpjp.util.AbstractPostgreSQLIntegrationTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.junit.Test;
 
 import javax.persistence.*;
@@ -34,7 +35,7 @@ public class PostgreSQLQueryToFileTest extends AbstractPostgreSQLIntegrationTest
     @Override
     public void init() {
         super.init();
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (long id = 1; id <= 100; id++) {
                 Post post = new Post();
                 post.setId(id);
@@ -45,7 +46,7 @@ public class PostgreSQLQueryToFileTest extends AbstractPostgreSQLIntegrationTest
 
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
     @Test

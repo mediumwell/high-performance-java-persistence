@@ -15,6 +15,7 @@ import org.junit.Test;
 import com.vladmihalcea.book.hpjp.hibernate.equality.AbstractEqualityCheckTest;
 import com.vladmihalcea.book.hpjp.hibernate.identifier.Identifiable;
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -51,7 +52,7 @@ public class EnversAuditedDefaultStrategyTest extends AbstractTest {
             );
         });
 
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             List<Post> posts = AuditReaderFactory.get( entityManager )
             .createQuery()
             .forRevisionsOfEntity( Post.class, true, true )
@@ -63,7 +64,7 @@ public class EnversAuditedDefaultStrategyTest extends AbstractTest {
             for ( int i = 0; i < posts.size(); i++ ) {
                 LOGGER.info( "Revision {} of Post entity: {}", i + 1, posts.get( i ) );
             }
-        });
+        }));
 
         List<Number> revisions = doInJPA( entityManager -> {
             return AuditReaderFactory.get( entityManager ).getRevisions(

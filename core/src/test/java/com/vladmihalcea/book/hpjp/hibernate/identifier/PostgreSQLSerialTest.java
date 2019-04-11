@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.identifier;
 
 import com.vladmihalcea.book.hpjp.util.AbstractPostgreSQLIntegrationTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.junit.Test;
 
 import javax.persistence.*;
@@ -54,7 +55,7 @@ public class PostgreSQLSerialTest extends AbstractPostgreSQLIntegrationTest {
 
     @Test
     public void testBatch() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 3; i++) {
                 Post post = new Post();
                 post.setTitle(
@@ -63,7 +64,7 @@ public class PostgreSQLSerialTest extends AbstractPostgreSQLIntegrationTest {
 
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
     @Entity(name = "Post")

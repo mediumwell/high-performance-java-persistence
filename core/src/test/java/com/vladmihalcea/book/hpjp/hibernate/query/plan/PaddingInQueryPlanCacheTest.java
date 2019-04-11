@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.query.plan;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.stat.Statistics;
 import org.junit.Test;
@@ -38,7 +39,7 @@ public class PaddingInQueryPlanCacheTest extends AbstractTest {
 
     @Override
     protected void afterInit() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 1; i <= 15; i++) {
                 Post post = new Post();
                 post.setId(i);
@@ -46,7 +47,7 @@ public class PaddingInQueryPlanCacheTest extends AbstractTest {
 
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
     @Test

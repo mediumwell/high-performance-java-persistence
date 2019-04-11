@@ -2,6 +2,7 @@ package com.vladmihalcea.book.hpjp.hibernate.query;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
 import com.vladmihalcea.book.hpjp.util.providers.Database;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.junit.Test;
 
 import javax.persistence.*;
@@ -38,7 +39,7 @@ public class PostgreSQLExecutionPlanTest extends AbstractTest {
 
     @Test
     public void testQueryExecutionPlan() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < ENTITY_COUNT; i++) {
                 Post post = new Post(String.format("Post no. %d", i));
 
@@ -49,7 +50,7 @@ public class PostgreSQLExecutionPlanTest extends AbstractTest {
 
                 entityManager.persist(post);
             }
-        });
+        }));
 
         /*
         SELECT

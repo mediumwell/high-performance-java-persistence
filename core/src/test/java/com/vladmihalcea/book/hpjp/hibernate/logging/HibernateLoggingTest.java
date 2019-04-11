@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
 import com.vladmihalcea.book.hpjp.util.DataSourceProxyType;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 
 /**
  * @author Vlad Mihalcea
@@ -46,7 +47,7 @@ public class HibernateLoggingTest extends AbstractTest {
 
     @Test
     public void testBatch() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for ( long id = 1; id <= 5; id++ ) {
                 Post post = new Post();
                 post.setId( id );
@@ -59,7 +60,7 @@ public class HibernateLoggingTest extends AbstractTest {
 
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
     @Entity(name = "Post")

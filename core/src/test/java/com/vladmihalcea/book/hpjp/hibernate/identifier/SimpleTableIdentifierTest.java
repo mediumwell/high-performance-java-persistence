@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.identifier;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.junit.Test;
 
 import javax.persistence.*;
@@ -16,7 +17,7 @@ public class SimpleTableIdentifierTest extends AbstractTest {
 
     @Test
     public void testSequenceIdentifierGenerator() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 3; i++) {
                 Post post = new Post();
                 post.setTitle(
@@ -24,7 +25,7 @@ public class SimpleTableIdentifierTest extends AbstractTest {
                 );
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
     @Entity(name = "Post")

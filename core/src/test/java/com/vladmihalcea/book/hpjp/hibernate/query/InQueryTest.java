@@ -2,6 +2,7 @@ package com.vladmihalcea.book.hpjp.hibernate.query;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
 import com.vladmihalcea.book.hpjp.util.providers.Database;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.junit.Test;
 
 import javax.persistence.*;
@@ -34,7 +35,7 @@ public class InQueryTest extends AbstractTest {
 
     @Test
     public void testPadding() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 1; i <= 15; i++) {
                 Post post = new Post();
                 post.setId(i);
@@ -42,7 +43,7 @@ public class InQueryTest extends AbstractTest {
 
                 entityManager.persist(post);
             }
-        });
+        }));
 
         doInJPA(entityManager -> {
             assertEquals(3, getPostByIds(entityManager, 1, 2, 3).size());

@@ -5,6 +5,7 @@ import com.vladmihalcea.book.hpjp.util.ReflectionUtils;
 import com.vladmihalcea.book.hpjp.util.providers.entity.BlogEntityProvider;
 import com.vladmihalcea.book.hpjp.util.providers.DataSourceProvider;
 import com.vladmihalcea.book.hpjp.util.providers.OracleDataSourceProvider;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -107,7 +108,7 @@ public class OracleImplicitStatementCacheTest extends AbstractOracleIntegrationT
 
     private void selectWhenCaching(boolean caching) {
         long startNanos = System.nanoTime();
-        doInJDBC(connection -> {
+        doInJDBC((ConnectionVoidCallable)(connection -> {
             ReflectionUtils.invokeSetter(connection, "implicitCachingEnabled", false);
             assertFalse(ReflectionUtils.invokeGetter(connection, "implicitCachingEnabled"));
             assertEquals(Integer.valueOf(5), ReflectionUtils.invokeGetter(connection, "statementCacheSize"));
@@ -129,7 +130,7 @@ public class OracleImplicitStatementCacheTest extends AbstractOracleIntegrationT
                     fail(e.getMessage());
                 }
             }
-        });
+        }));
         LOGGER.info("{} when caching Statements is {} took {} millis",
                 getClass().getSimpleName(),
                 caching,

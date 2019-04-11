@@ -1,4 +1,5 @@
 package com.vladmihalcea.book.hpjp.hibernate.identifier.batch;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 
 import org.junit.Test;
 
@@ -15,7 +16,7 @@ public class IdentityIdentifierTest extends AbstractBatchIdentifierTest {
 
     @Test
     public void testIdentityIdentifierGenerator() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 3; i++) {
                 Post post = new Post();
                 post.setTitle(
@@ -23,7 +24,7 @@ public class IdentityIdentifierTest extends AbstractBatchIdentifierTest {
                 );
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
     @Test

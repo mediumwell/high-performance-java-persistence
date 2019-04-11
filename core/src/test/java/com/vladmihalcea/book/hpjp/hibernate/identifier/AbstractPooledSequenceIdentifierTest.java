@@ -1,6 +1,8 @@
 package com.vladmihalcea.book.hpjp.hibernate.identifier;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.JPATransactionVoidFunction;
+
 import org.hibernate.Session;
 
 import java.sql.Statement;
@@ -22,7 +24,7 @@ public abstract class AbstractPooledSequenceIdentifierTest extends AbstractTest 
 
     protected void insertSequences() {
         LOGGER.debug("testSequenceIdentifierGenerator");
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 5; i++) {
                 entityManager.persist(newEntityInstance());
                 entityManager.flush();
@@ -45,6 +47,6 @@ public abstract class AbstractPooledSequenceIdentifierTest extends AbstractTest 
                 entityManager.persist(newEntityInstance());
                 entityManager.flush();
             }
-        });
+        }));
     }
 }

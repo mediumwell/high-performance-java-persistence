@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.identifier;
 
 import com.vladmihalcea.book.hpjp.util.AbstractMySQLIntegrationTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.junit.Test;
 
 import javax.persistence.*;
@@ -21,7 +22,7 @@ public class AutoIdentifierMySQLTest extends AbstractMySQLIntegrationTest {
 
     @Test
     public void test() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for ( int i = 1; i <= 3; i++ ) {
                 entityManager.persist(
                         new Post(
@@ -31,7 +32,7 @@ public class AutoIdentifierMySQLTest extends AbstractMySQLIntegrationTest {
                         )
                 );
             }
-        });
+        }));
     }
 
     @Entity(name = "Post")

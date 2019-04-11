@@ -1,6 +1,7 @@
 package com.vladmihalcea.book.hpjp.hibernate.batch;
 
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.junit.Test;
 
 import javax.persistence.*;
@@ -57,13 +58,13 @@ public class DeletingWithoutCascadeBatchingTest extends AbstractTest {
     }
 
     private void insertPostsAndComments() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 3; i++) {
                 Post post = new Post(String.format("Post no. %d", i));
                 post.addComment(new PostComment("Good"));
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
     @Entity(name = "Post")

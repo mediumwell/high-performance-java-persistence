@@ -6,6 +6,7 @@ import com.codahale.metrics.Timer;
 import com.vladmihalcea.book.hpjp.util.DataSourceProviderIntegrationTest;
 import com.vladmihalcea.book.hpjp.util.providers.entity.BlogEntityProvider;
 import com.vladmihalcea.book.hpjp.util.providers.DataSourceProvider;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 
 import org.junit.Test;
 
@@ -152,7 +153,7 @@ public class ResultSetColumnSizeTest extends DataSourceProviderIntegrationTest {
     }
 
     public void testInternal(String sql) {
-        doInJDBC(connection -> {
+        doInJDBC((ConnectionVoidCallable)(connection -> {
             for (int i = 0; i < runCount(); i++) {
                 try (PreparedStatement statement = connection.prepareStatement(
                         sql
@@ -171,7 +172,7 @@ public class ResultSetColumnSizeTest extends DataSourceProviderIntegrationTest {
                     fail(e.getMessage());
                 }
             }
-        });
+        }));
         LOGGER.info("{} Result Set statement {}", dataSourceProvider().database(), sql);
         logReporter.report();
     }

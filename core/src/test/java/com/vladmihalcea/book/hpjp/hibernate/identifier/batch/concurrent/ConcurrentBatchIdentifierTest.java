@@ -11,6 +11,7 @@ import com.vladmihalcea.book.hpjp.util.AbstractTest;
 import com.vladmihalcea.book.hpjp.util.providers.DataSourceProvider;
 import com.vladmihalcea.book.hpjp.util.providers.MySQLDataSourceProvider;
 import com.vladmihalcea.book.hpjp.util.providers.PostgreSQLDataSourceProvider;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -95,11 +96,11 @@ public class ConcurrentBatchIdentifierTest<T> extends AbstractTest {
     public void testIdentifierGenerator() throws InterruptedException, ExecutionException {
         LOGGER.debug("testIdentifierGenerator, database: {}, entityProvider: {}, threadCount: {}", dataSourceProvider.database(), entityProvider.getClass().getSimpleName(), threadCount);
         //warming-up
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < insertCount * executionCount; i++) {
                 entityManager.persist(entityProvider.newPost());
             }
-        });
+        }));
 
         List<Worker> workers = new ArrayList<>(threadCount);
         for (int i = 0; i < threadCount; i++) {

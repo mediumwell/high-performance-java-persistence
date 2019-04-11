@@ -6,6 +6,7 @@ import com.codahale.metrics.Timer;
 import com.vladmihalcea.book.hpjp.util.DataSourceProviderIntegrationTest;
 import com.vladmihalcea.book.hpjp.util.providers.entity.BlogEntityProvider;
 import com.vladmihalcea.book.hpjp.util.providers.DataSourceProvider;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 
 import org.junit.Test;
 
@@ -157,7 +158,7 @@ public class ResultSetCursorTest extends DataSourceProviderIntegrationTest {
     }
 
     public void testInternal(int resultSetType, int resultSetConcurrency) {
-        doInJDBC(connection -> {
+        doInJDBC((ConnectionVoidCallable)(connection -> {
             for (int i = 0; i < runCount(); i++) {
                 long startNanos = System.nanoTime();
                 try (PreparedStatement statement = connection.prepareStatement(
@@ -176,7 +177,7 @@ public class ResultSetCursorTest extends DataSourceProviderIntegrationTest {
                     fail(e.getMessage());
                 }
             }
-        });
+        }));
         LOGGER.info("{} Result Set Type {} and Concurrency {}",
                 dataSourceProvider().database(),
                 resultSetType == ResultSet.TYPE_FORWARD_ONLY ? "ResultSet.TYPE_FORWARD_ONLY" : "ResultSet.TYPE_SCROLL_SENSITIVE",

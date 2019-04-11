@@ -5,6 +5,7 @@ import com.vladmihalcea.book.hpjp.util.AbstractPostgreSQLIntegrationTest;
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
 import com.vladmihalcea.book.hpjp.util.providers.DataSourceProvider;
 import com.vladmihalcea.book.hpjp.util.providers.PostgreSQLDataSourceProvider;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.junit.Test;
 import org.postgresql.ds.PGSimpleDataSource;
 
@@ -148,23 +149,23 @@ public class PostgreSQLBatchRewriteTest extends AbstractPostgreSQLIntegrationTes
     }
 
     private void insertPosts() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 10; i++) {
                 entityManager.persist(
                     new Post(String.format("Post no. %d", i + 1))
                 );
             }
-        });
+        }));
     }
 
     private void insertPostsAndComments() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (int i = 0; i < 3; i++) {
                 Post post = new Post(String.format("Post no. %d", i));
                 post.addComment(new PostComment("Good"));
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
     @Entity(name = "Post")

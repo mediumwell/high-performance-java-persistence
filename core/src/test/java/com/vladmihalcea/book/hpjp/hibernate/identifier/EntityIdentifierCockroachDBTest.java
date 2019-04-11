@@ -17,6 +17,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.vladmihalcea.book.hpjp.util.AbstractCockroachDBIntegrationTest;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -37,7 +38,7 @@ public class EntityIdentifierCockroachDBTest extends AbstractCockroachDBIntegrat
 	@Test
 	@Ignore
 	public void test() {
-		doInJPA( entityManager -> {
+		doInJPA((JPATransactionVoidFunction)(entityManager -> {
 			LocalDate startDate = LocalDate.of( 2016, 11, 2 );
 			for ( int offset = 0; offset < 10; offset++ ) {
 				Post post = new Post();
@@ -56,7 +57,7 @@ public class EntityIdentifierCockroachDBTest extends AbstractCockroachDBIntegrat
 				);
 				entityManager.persist( post );
 			}
-		} );
+		} ));
 
 		doInJPA( entityManager -> {
 

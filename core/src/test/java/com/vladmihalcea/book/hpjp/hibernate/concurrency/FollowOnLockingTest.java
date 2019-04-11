@@ -3,6 +3,7 @@ package com.vladmihalcea.book.hpjp.hibernate.concurrency;
 import com.vladmihalcea.book.hpjp.util.AbstractOracleIntegrationTest;
 import com.vladmihalcea.book.hpjp.util.providers.DataSourceProvider;
 import com.vladmihalcea.book.hpjp.util.providers.OracleDataSourceProvider;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
@@ -31,7 +32,7 @@ public class FollowOnLockingTest extends AbstractOracleIntegrationTest {
     @Before
     public void init() {
         super.init();
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             for (long i = 0; i < 5; i++) {
                 Post post = new Post();
                 post.setId(i);
@@ -40,7 +41,7 @@ public class FollowOnLockingTest extends AbstractOracleIntegrationTest {
                 post.setStatus(PostStatus.PENDING);
                 entityManager.persist(post);
             }
-        });
+        }));
     }
 
     @Test

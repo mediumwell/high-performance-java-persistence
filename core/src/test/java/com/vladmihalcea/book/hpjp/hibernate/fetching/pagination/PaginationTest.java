@@ -3,6 +3,7 @@ package com.vladmihalcea.book.hpjp.hibernate.fetching.pagination;
 import com.vladmihalcea.book.hpjp.hibernate.fetching.PostCommentSummary;
 import com.vladmihalcea.book.hpjp.util.AbstractTest;
 import com.vladmihalcea.book.hpjp.util.providers.Database;
+import com.vladmihalcea.book.hpjp.util.transaction.*;
 import org.hibernate.jpa.QueryHints;
 import org.hibernate.query.NativeQuery;
 import org.junit.Test;
@@ -180,7 +181,7 @@ public class PaginationTest extends AbstractTest {
 
     @Test
     public void testFetchAndPaginateWithTwoQueries() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             List<Long> postIds = entityManager
                     .createQuery(
                             "select p.id " +
@@ -217,7 +218,7 @@ public class PaginationTest extends AbstractTest {
                         postComment1.getReview()
                 );
             }
-        });
+        }));
     }
 
     @Test
@@ -277,7 +278,7 @@ public class PaginationTest extends AbstractTest {
 
     @Test
     public void testFetchAndPaginateUsingDenseRank() {
-        doInJPA(entityManager -> {
+        doInJPA((JPATransactionVoidFunction)(entityManager -> {
             List<Post> posts = entityManager
                     .createNamedQuery("PostWithCommentByRank")
                     .setParameter(
@@ -311,7 +312,7 @@ public class PaginationTest extends AbstractTest {
                         postComment1.getReview()
                 );
             }
-        });
+        }));
     }
 
     @Test
